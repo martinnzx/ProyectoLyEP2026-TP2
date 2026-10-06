@@ -1,4 +1,3 @@
-import React from 'react';
 import '../css/emptystate.css';
 
 const EmptyState = ({ titulo, mensaje, accion }) => {
