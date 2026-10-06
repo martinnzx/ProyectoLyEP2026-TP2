@@ -60,3 +60,9 @@ Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_
 - 20260913 - Mamani Mariano Martin: Commit con mejora implementada referida a Estados Vacíos y Feedback Uniforme (UX) resolviendo el hallazgo H-014, rama feature/ux-estados-vacios
 Archivo de especificaciones para implementación de mejora en Docs/mejoras/spec_13.md
 Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_13.md
+
+
+- 20261006 - Valentin Iriarte: Commit con integración completa de servicios y estado del frontend con la API REST del backend (clientes y autenticación con MongoDB), rama feature/IriarteValentin
+Archivo de especificaciones para implementación de mejora en Docs/mejoras/spec_14.md
+Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_14.md
+
