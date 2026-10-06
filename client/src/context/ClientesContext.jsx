@@ -2,43 +2,26 @@ import { useEffect, useRef, useState, useMemo, useCallback } from "react";
 import clientesService from "../services/clientesService";
 import ClientesContext from "./ClientesContextDefinition";
 
-const estadoInicial = {
-    version: 1,
-    clientesRemotos: [],
-    clientesLocales: [],
-    idsEliminados: [],
-    ultimoId: 0
-};
-
-const idNumerico = (cliente) => Number(cliente?.id) || 0;
-
-const mayorId = (clientes) =>
-    clientes.reduce(
-        (mayor, cliente) => Math.max(mayor, idNumerico(cliente)),
-        0
-    );
-
-const combinarClientes = (estado) => {
-    const idsEliminados = new Set(estado.idsEliminados);
-    const clientes = [
-        ...estado.clientesRemotos.filter(
-            (cliente) => !idsEliminados.has(idNumerico(cliente))
-        ),
-        ...estado.clientesLocales.filter(
-            (cliente) => !idsEliminados.has(idNumerico(cliente))
-        )
-    ];
-
-    return Array.from(
-        new Map(clientes.map((cliente) => [idNumerico(cliente), cliente])).values()
-    ).sort((a, b) => idNumerico(b) - idNumerico(a));
-};
-
 export const ClientesProvider = ({ children }) => {
-    const [estado, setEstado] = useState(estadoInicial);
+    const [clientes, setClientes] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
     const cargaClientes = useRef(null);
+
+    const cargarClientes = useCallback(async (signal) => {
+        try {
+            setLoading(true);
+            setError("");
+            const data = await clientesService.obtenerClientes(signal);
+            setClientes(Array.isArray(data) ? data : []);
+        } catch (err) {
+            if (err.name !== "CanceledError" && err.name !== "AbortError") {
+                setError("Error al cargar los clientes.");
+            }
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         let activo = true;
@@ -49,23 +32,9 @@ export const ClientesProvider = ({ children }) => {
         }
 
         cargaClientes.current
-            .then((clientesRemotos) => {
+            .then((data) => {
                 if (!activo) return;
-
-                setEstado((estadoActual) => {
-                    const ultimoId = Math.max(
-                        estadoActual.ultimoId,
-                        mayorId(clientesRemotos),
-                        mayorId(estadoActual.clientesLocales),
-                        ...estadoActual.idsEliminados
-                    );
-
-                    return {
-                        ...estadoActual,
-                        clientesRemotos,
-                        ultimoId
-                    };
-                });
+                setClientes(Array.isArray(data) ? data : []);
             })
             .catch((err) => {
                 if (activo && err.name !== "CanceledError" && err.name !== "AbortError") {
@@ -85,46 +54,33 @@ export const ClientesProvider = ({ children }) => {
         };
     }, []);
 
-    const clientes = useMemo(() => combinarClientes(estado), [estado]);
-
     const crearCliente = useCallback(async (datos) => {
-        const siguienteId = Math.max(
-            estado.ultimoId,
-            mayorId(estado.clientesRemotos),
-            mayorId(estado.clientesLocales),
-            ...estado.idsEliminados
-        ) + 1;
-        const cliente = { ...datos, id: siguienteId };
-
-        await clientesService.crearCliente(cliente);
-
-        setEstado((estadoActual) => ({
-            ...estadoActual,
-            clientesLocales: [...estadoActual.clientesLocales, cliente],
-            ultimoId: siguienteId
-        }));
-
-        return cliente;
-    }, [estado.ultimoId, estado.clientesRemotos, estado.clientesLocales, estado.idsEliminados]);
+        const clienteGuardado = await clientesService.crearCliente(datos);
+        setClientes((clientesActuales) => [clienteGuardado, ...clientesActuales]);
+        return clienteGuardado;
+    }, []);
 
     const eliminarCliente = useCallback(async (id) => {
         await clientesService.eliminarCliente(id);
-
-        setEstado((estadoActual) => ({
-            ...estadoActual,
-            clientesLocales: estadoActual.clientesLocales.filter(
-                (cliente) => idNumerico(cliente) !== Number(id)
-            ),
-            idsEliminados: estadoActual.idsEliminados.includes(Number(id))
-                ? estadoActual.idsEliminados
-                : [...estadoActual.idsEliminados, Number(id)]
-        }));
+        setClientes((clientesActuales) =>
+            clientesActuales.filter((cliente) => String(cliente.id) !== String(id))
+        );
     }, []);
 
     const obtenerClientePorId = useCallback((id) =>
-        clientes.find((cliente) => idNumerico(cliente) === Number(id)),
+        clientes.find((cliente) => String(cliente.id) === String(id)),
         [clientes]
     );
+
+    const actualizarCliente = useCallback(async (id, datos) => {
+        const clienteActualizado = await clientesService.actualizarCliente(id, datos);
+        setClientes((clientesActuales) =>
+            clientesActuales.map((cliente) =>
+                String(cliente.id) === String(id) ? clienteActualizado : cliente
+            )
+        );
+        return clienteActualizado;
+    }, []);
 
     const value = useMemo(
         () => ({
@@ -133,9 +89,11 @@ export const ClientesProvider = ({ children }) => {
             error,
             crearCliente,
             eliminarCliente,
-            obtenerClientePorId
+            obtenerClientePorId,
+            actualizarCliente,
+            recargarClientes: cargarClientes
         }),
-        [clientes, loading, error, crearCliente, eliminarCliente, obtenerClientePorId]
+        [clientes, loading, error, crearCliente, eliminarCliente, obtenerClientePorId, actualizarCliente, cargarClientes]
     );
 
     return (
