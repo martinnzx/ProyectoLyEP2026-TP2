@@ -9,6 +9,8 @@ const Login = () => {
   const [password, setPassword] = useState('')
   const [sector, setSector] = useState('')
   const [errores, setErrores] = useState({})
+  const [errorServidor, setErrorServidor] = useState('')
+  const [cargando, setCargando] = useState(false)
   const { setAdmin } = useAutorizaciones()
   const navigate = useNavigate()
 
@@ -38,25 +40,33 @@ const Login = () => {
     return Object.keys(nuevosErrores).length === 0
   }
 
-  const manejarSubmit = (e) => {
+  const manejarSubmit = async (e) => {
     e.preventDefault()
     if (!validar()) return
-    const usuario = AutorizacionesService.login(
-      email,
-      password,
-      sector
-    )
-    if (!usuario) {
-      alert('Verifique los datos')
-      return
+    setErrorServidor('')
+    setCargando(true)
+
+    try {
+      const usuario = await AutorizacionesService.login(
+        email,
+        password,
+        sector
+      )
+
+      localStorage.setItem("role", usuario.sector)
+      setAdmin({
+        id: usuario.id,
+        nombre: usuario.nombre,
+        email: usuario.email,
+        sector: usuario.sector
+      })
+      navigate('/')
+    } catch (err) {
+      const mensaje = err.response?.data?.message || 'Error al iniciar sesión. Verifique sus credenciales.'
+      setErrorServidor(mensaje)
+    } finally {
+      setCargando(false)
     }
-    localStorage.setItem("role", usuario.sector)
-    setAdmin({
-      nombre: usuario.nombre,
-      email: usuario.email,
-      sector: usuario.sector
-    })
-    navigate('/')
   }
 
   return (
@@ -126,8 +136,19 @@ const Login = () => {
           {errores.sector || ''}
         </p>
 
-        <button type="submit" className="login-button">
-          Ingresar
+        {errorServidor && (
+          <p
+            id="error-login-servidor"
+            className="login-error"
+            role="alert"
+            aria-live="polite"
+          >
+            {errorServidor}
+          </p>
+        )}
+
+        <button type="submit" className="login-button" disabled={cargando}>
+          {cargando ? 'Ingresando...' : 'Ingresar'}
         </button>
       </form>
     </section>

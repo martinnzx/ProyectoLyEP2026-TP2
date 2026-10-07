@@ -19,7 +19,7 @@ const DetalleCliente = () => {
   const manejarEliminacion = async () => {
     try {
       setEliminando(true);
-      await quitarCliente(Number(id));
+      await quitarCliente(id);
       setMensaje("Cliente eliminado correctamente");
       navigate("/clientes");
     } catch {

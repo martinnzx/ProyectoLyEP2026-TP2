@@ -19,19 +19,19 @@ const mayorId = (clientes) =>
     );
 
 const combinarClientes = (estado) => {
-    const idsEliminados = new Set(estado.idsEliminados);
+    const idsEliminados = new Set(estado.idsEliminados.map(String));
     const clientes = [
         ...estado.clientesRemotos.filter(
-            (cliente) => !idsEliminados.has(idNumerico(cliente))
+            (cliente) => !idsEliminados.has(String(cliente?.id))
         ),
         ...estado.clientesLocales.filter(
-            (cliente) => !idsEliminados.has(idNumerico(cliente))
+            (cliente) => !idsEliminados.has(String(cliente?.id))
         )
     ];
 
     return Array.from(
-        new Map(clientes.map((cliente) => [idNumerico(cliente), cliente])).values()
-    ).sort((a, b) => idNumerico(b) - idNumerico(a));
+        new Map(clientes.map((cliente) => [String(cliente?.id), cliente])).values()
+    );
 };
 
 export const ClientesProvider = ({ children }) => {
@@ -56,13 +56,12 @@ export const ClientesProvider = ({ children }) => {
                     const ultimoId = Math.max(
                         estadoActual.ultimoId,
                         mayorId(clientesRemotos),
-                        mayorId(estadoActual.clientesLocales),
-                        ...estadoActual.idsEliminados
+                        mayorId(estadoActual.clientesLocales)
                     );
 
                     return {
                         ...estadoActual,
-                        clientesRemotos,
+                        clientesRemotos: Array.isArray(clientesRemotos) ? clientesRemotos : [],
                         ultimoId
                     };
                 });
@@ -91,12 +90,10 @@ export const ClientesProvider = ({ children }) => {
         const siguienteId = Math.max(
             estado.ultimoId,
             mayorId(estado.clientesRemotos),
-            mayorId(estado.clientesLocales),
-            ...estado.idsEliminados
+            mayorId(estado.clientesLocales)
         ) + 1;
-        const cliente = { ...datos, id: siguienteId };
-
-        await clientesService.crearCliente(cliente);
+        const respuesta = await clientesService.crearCliente(datos);
+        const cliente = respuesta?.id ? respuesta : { ...datos, id: siguienteId };
 
         setEstado((estadoActual) => ({
             ...estadoActual,
@@ -105,7 +102,7 @@ export const ClientesProvider = ({ children }) => {
         }));
 
         return cliente;
-    }, [estado.ultimoId, estado.clientesRemotos, estado.clientesLocales, estado.idsEliminados]);
+    }, [estado.ultimoId, estado.clientesRemotos, estado.clientesLocales]);
 
     const eliminarCliente = useCallback(async (id) => {
         await clientesService.eliminarCliente(id);
@@ -113,16 +110,16 @@ export const ClientesProvider = ({ children }) => {
         setEstado((estadoActual) => ({
             ...estadoActual,
             clientesLocales: estadoActual.clientesLocales.filter(
-                (cliente) => idNumerico(cliente) !== Number(id)
+                (cliente) => String(cliente?.id) !== String(id)
             ),
-            idsEliminados: estadoActual.idsEliminados.includes(Number(id))
+            idsEliminados: estadoActual.idsEliminados.includes(String(id))
                 ? estadoActual.idsEliminados
-                : [...estadoActual.idsEliminados, Number(id)]
+                : [...estadoActual.idsEliminados, String(id)]
         }));
     }, []);
 
     const obtenerClientePorId = useCallback((id) =>
-        clientes.find((cliente) => idNumerico(cliente) === Number(id)),
+        clientes.find((cliente) => String(cliente?.id) === String(id)),
         [clientes]
     );
 

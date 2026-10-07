@@ -87,10 +87,10 @@ const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             setTelefono("");
             setCiudad("");
 
-        } catch {
+        } catch (err) {
 
             setError(
-                "Ocurrió un error al crear el cliente."
+                err.response?.data?.message || "Ocurrió un error al crear el cliente."
             );
 
         } finally {
