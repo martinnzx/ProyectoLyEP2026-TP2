@@ -66,3 +66,8 @@ Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_
 Archivo de especificaciones para implementación de mejora en Docs/mejoras/spec_14.md
 Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_14.md
 
+
+- 20261008 - Miranda Cesar: Commit con mejora implementada referida a la actualización del Dashboard para mostrar datos reales de la base de datos (cantidad total de clientes y usuarios de los sectores Gerencia y Soporte), rama feature/MirandaCesar
+Archivo de especificaciones para implementación de mejora en Docs/mejoras/spec_15.md
+Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_15.md
+
