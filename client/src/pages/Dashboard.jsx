@@ -1,8 +1,36 @@
+import { useEffect, useState } from 'react'
 import '../css/dashboard.css'
 import useAutorizaciones from '../hooks/useAutorizaciones'
+import useClientes from '../hooks/useClientes'
+import autorizacionesServices from '../services/autorizacionesServices'
 
 const Dashboard = () => {
   const { admin } = useAutorizaciones()
+  const { clientes, loading: cargandoClientes } = useClientes()
+  const [usuarios, setUsuarios] = useState([])
+  const [cargandoUsuarios, setCargandoUsuarios] = useState(true)
+
+  useEffect(() => {
+    let activo = true
+
+    autorizacionesServices.obtenerUsuarios()
+      .then((datos) => {
+        if (activo) setUsuarios(Array.isArray(datos) ? datos : [])
+      })
+      .catch(() => {
+        if (activo) setUsuarios([])
+      })
+      .finally(() => {
+        if (activo) setCargandoUsuarios(false)
+      })
+
+    return () => {
+      activo = false
+    }
+  }, [])
+
+  const contarSector = (sector) =>
+    usuarios.filter((usuario) => usuario.sector === sector).length
 
   return (
     <div className="dashboard">
@@ -20,17 +48,17 @@ const Dashboard = () => {
 
         <div className="dashboard-card">
           <h3>Clientes</h3>
-          <p>10</p>
+          <p>{cargandoClientes ? '…' : clientes.length}</p>
         </div>
 
         <div className="dashboard-card">
           <h3>Gerencia</h3>
-          <p>3</p>
+          <p>{cargandoUsuarios ? '…' : contarSector('Gerencia')}</p>
         </div>
 
         <div className="dashboard-card">
           <h3>Soporte</h3>
-          <p>3</p>
+          <p>{cargandoUsuarios ? '…' : contarSector('Soporte')}</p>
         </div>
       </div>
 

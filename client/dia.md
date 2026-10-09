@@ -66,3 +66,10 @@ Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_
 Archivo de especificaciones para implementación de mejora en Docs/mejoras/spec_14.md
 Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_14.md
 
+
+- 20261008 - Miranda Cesar: Commit con mejora implementada referida a la actualización del Dashboard para mostrar datos reales de la base de datos (cantidad total de clientes y usuarios de los sectores Gerencia y Soporte), rama feature/MirandaCesar
+Archivo de especificaciones para implementación de mejora en Docs/mejoras/spec_15.md
+Archivo con el resultado de la implementación de la mejora en Docs/mejoras/doc_15.md
+
+- 20261008 - Miranda Cesar: Commit con agregado de testing general del proyecto(client\testing_general.md). Además de Los tests actuales que cubren backend y frontend por separado, se ejecutó y documentó una prueba de integración real conectando los servicios del frontend a la API sobre una MongoDB en memoria.
+Además se generó la documentación técnica general del proyecto(client\documentacion_general.md) con el siguiente detalle: arquitectura, estructura del repositorio, modelos, endpoints, formato de errores y puesta en marcha.
