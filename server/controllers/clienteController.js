@@ -65,7 +65,7 @@ export const updateCliente = async (req, res, next) => {
         const clienteActualizado = await Cliente.findByIdAndUpdate(
             id,
             req.body,
-            { new: true, runValidators: true }
+            { returnDocument: 'after', runValidators: true }
         );
 
         if (!clienteActualizado) {

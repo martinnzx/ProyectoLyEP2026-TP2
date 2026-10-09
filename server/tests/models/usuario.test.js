@@ -19,7 +19,8 @@ describe("Modelo Usuario", () => {
 
             expect(usuarioGuardado._id).toBeDefined();
             expect(usuarioGuardado.email).toBe(datosUsuario.email);
-            expect(usuarioGuardado.password).toBe(datosUsuario.password);
+            expect(usuarioGuardado.password).not.toBe(datosUsuario.password);
+            expect(usuarioGuardado.password.startsWith('$2')).toBe(true); // bcrypt hash
             expect(usuarioGuardado.nombre).toBe(datosUsuario.nombre);
             expect(usuarioGuardado.sector).toBe(datosUsuario.sector);
         });
@@ -157,8 +158,9 @@ describe("Modelo Usuario", () => {
             const usuarioJSON = usuarioGuardado.toJSON();
 
             expect(usuarioJSON.password).toBeUndefined();
-            // Verificar que el password SÍ existe en el documento original
-            expect(usuarioGuardado.password).toBe("contraseña_secreta");
+            // Verificar que el password SÍ existe en el documento original y está hasheado
+            expect(usuarioGuardado.password).toBeDefined();
+            expect(usuarioGuardado.password).not.toBe("contraseña_secreta");
         });
     });
 });

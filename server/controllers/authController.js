@@ -1,4 +1,5 @@
 import Usuario from '../models/Usuario.js';
+import bcrypt from 'bcryptjs';
 
 // POST /api/auth/login - Iniciar sesión
 export const login = async (req, res, next) => {
@@ -19,8 +20,9 @@ export const login = async (req, res, next) => {
             });
         }
 
-        // Comparar contraseña (texto plano según etapa actual del SDD)
-        if (usuario.password !== password) {
+        // Comparar contraseña usando bcrypt
+        const isMatch = await bcrypt.compare(password, usuario.password);
+        if (!isMatch) {
             return res.status(401).json({ 
                 message: 'Credenciales inválidas' 
             });
