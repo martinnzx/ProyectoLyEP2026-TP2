@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const usuarioSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
@@ -7,6 +8,15 @@ const usuarioSchema = new mongoose.Schema({
     sector: { type: String, enum: ['Soporte', 'Gerencia'], required: true }
 }, {
     timestamps: true
+});
+
+// Hook para encriptar la contraseña antes de guardar
+usuarioSchema.pre('save', async function() {
+    // Si la contraseña no ha sido modificada, terminamos la ejecución del hook
+    if (!this.isModified('password')) return;
+    
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
 });
 
 // Remove password from JSON returns for security
