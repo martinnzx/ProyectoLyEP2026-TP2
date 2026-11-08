@@ -1,0 +1,303 @@
+/* Prototipo de preventa: hoja de ruta, semáforo y ficha comercial */
+
+.preventa {
+  background: var(--color-bg-card);
+  max-width: 900px;
+  width: 100%;
+  margin: 40px auto;
+  padding: 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.preventa h1 {
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 20px;
+}
+
+/* Semáforo: el color siempre va acompañado de texto */
+.semaforo {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.semaforo-punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.semaforo--rojo { background: #fde2e1; color: #b42318; }
+.semaforo--amarillo { background: #fef3c7; color: #92400e; }
+.semaforo--verde { background: #dcfce7; color: #166534; }
+
+/* Estado de conexión */
+.estado-conexion {
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.estado-conexion--ok {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success-border);
+}
+
+.estado-conexion--offline {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fcd34d;
+}
+
+/* Hoja de ruta */
+.ruta-resumen {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-weight: 700;
+}
+
+.ruta-ayuda {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 10px 0 20px;
+}
+
+.ruta-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ruta-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 18px;
+  border-radius: var(--radius-sm);
+  border-left: 6px solid;
+  background: var(--color-primary-subtle);
+}
+
+.ruta-item--rojo { border-left-color: #dc2626; }
+.ruta-item--amarillo { border-left-color: #f59e0b; }
+.ruta-item--verde { border-left-color: #16a34a; }
+
+.ruta-item-datos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.ruta-item-direccion,
+.ruta-item-motivo {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+}
+
+.ruta-item-motivo {
+  font-style: italic;
+}
+
+/* Botones */
+.btn-preventa {
+  display: inline-block;
+  background: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 18px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: var(--transition-normal);
+}
+
+.btn-preventa:hover:not(:disabled) {
+  background: var(--color-primary-dark);
+  color: #fff;
+}
+
+.btn-preventa:disabled,
+.btn-secundario:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secundario,
+.btn-quitar {
+  background: #fff;
+  color: var(--color-primary-dark);
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-weight: 600;
+}
+
+.btn-quitar {
+  padding: 4px 10px;
+  font-size: 0.85rem;
+}
+
+/* Ficha comercial (dentro de la ficha del cliente) */
+.ficha-semaforo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  border-left: 6px solid;
+  background: var(--color-primary-subtle);
+  margin-bottom: 16px;
+}
+
+.barra-saldo {
+  height: 10px;
+  background: #e5e7eb;
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.barra-saldo-relleno {
+  height: 100%;
+  background: #16a34a;
+}
+
+.barra-saldo-relleno--alerta {
+  background: #dc2626;
+}
+
+.tabla-pedido-contenedor {
+  overflow-x: auto;
+}
+
+.tabla-pedido {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+}
+
+.tabla-pedido th,
+.tabla-pedido td {
+  padding: 8px;
+  border-bottom: 1px solid var(--color-primary-light);
+  text-align: left;
+}
+
+.input-cantidad {
+  width: 70px;
+  padding: 4px 6px;
+  border: 1px solid var(--color-primary-border);
+  border-radius: 6px;
+}
+
+.pedido-acciones {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
+.pedido-acciones select,
+.form-visita select,
+.form-visita textarea {
+  padding: 8px;
+  border: 1px solid var(--color-primary-border);
+  border-radius: var(--radius-sm);
+}
+
+.pedido-total {
+  font-size: 1.1rem;
+}
+
+.form-visita {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.form-visita fieldset {
+  display: flex;
+  gap: 18px;
+}
+
+.form-visita legend {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+
+.form-visita label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+}
+
+.form-visita fieldset label {
+  flex-direction: row;
+  width: auto;
+}
+
+.lista-registros {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lista-registros li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--color-primary-subtle);
+  border-radius: var(--radius-sm);
+}
+
+.etiqueta-sync {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.etiqueta-sync--ok {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+}
+
+@media (max-width: 768px) {
+  .preventa {
+    margin: 20px auto;
+    padding: 24px 16px;
+  }
+
+  .ruta-item {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

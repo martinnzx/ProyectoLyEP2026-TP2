@@ -4,6 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useClientes from "../hooks/useClientes";
 import EmptyState from "../components/EmptyState";
 import useAutorizaciones from "../hooks/useAutorizaciones";
+import FichaComercial from "../components/FichaComercial";
 
 const DetalleCliente = () => {
   const { id } = useParams();
@@ -90,6 +91,8 @@ const DetalleCliente = () => {
       <p>
         <strong>Usuario:</strong> {cliente.username}
       </p>
+
+      <FichaComercial key={cliente.id} clienteId={cliente.id} />
 
       {role?.trim() === "Gerencia" && (
         <button

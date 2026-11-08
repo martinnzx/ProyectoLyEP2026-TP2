@@ -10,7 +10,27 @@ const estadoInicial = {
     ultimoId: 0
 };
 
-const idNumerico = (cliente) => Number(cliente?.id) || 0;
+// Prototipo offline: copia de los clientes descargados la última vez que hubo conexión
+const CLAVE_DESCARGA = "clientesDescargados";
+
+const guardarDescarga = (clientes) => {
+    try {
+        localStorage.setItem(CLAVE_DESCARGA, JSON.stringify({ fecha: new Date().toISOString(), clientes }));
+    } catch {
+        // Sin almacenamiento disponible: el prototipo sigue funcionando online
+    }
+};
+
+const leerDescarga = () => {
+    try {
+        const guardado = JSON.parse(localStorage.getItem(CLAVE_DESCARGA));
+        return Array.isArray(guardado?.clientes) ? guardado : null;
+    } catch {
+        return null;
+    }
+};
+
+const idNumerico =(cliente) => Number(cliente?.id) || 0;
 
 const mayorId = (clientes) =>
     clientes.reduce(
@@ -38,6 +58,7 @@ export const ClientesProvider = ({ children }) => {
     const [estado, setEstado] = useState(estadoInicial);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState("");
+    const [descargaUsada, setDescargaUsada] = useState(null);
     const cargaClientes = useRef(null);
 
     useEffect(() => {
@@ -51,6 +72,8 @@ export const ClientesProvider = ({ children }) => {
         cargaClientes.current
             .then((clientesRemotos) => {
                 if (!activo) return;
+
+                if (Array.isArray(clientesRemotos)) guardarDescarga(clientesRemotos);
 
                 setEstado((estadoActual) => {
                     const ultimoId = Math.max(
@@ -67,7 +90,17 @@ export const ClientesProvider = ({ children }) => {
                 });
             })
             .catch((err) => {
-                if (activo && err.name !== "CanceledError" && err.name !== "AbortError") {
+                if (!activo || err.name === "CanceledError" || err.name === "AbortError") return;
+
+                const descarga = leerDescarga();
+                if (descarga) {
+                    // Sin conexión con el servidor: se trabaja con los datos descargados
+                    setDescargaUsada(descarga.fecha);
+                    setEstado((estadoActual) => ({
+                        ...estadoActual,
+                        clientesRemotos: descarga.clientes
+                    }));
+                } else {
                     setError("Error al cargar los clientes.");
                 }
             })
@@ -128,11 +161,12 @@ export const ClientesProvider = ({ children }) => {
             clientes,
             loading,
             error,
+            descargaUsada,
             crearCliente,
             eliminarCliente,
             obtenerClientePorId
         }),
-        [clientes, loading, error, crearCliente, eliminarCliente, obtenerClientePorId]
+        [clientes, loading, error, descargaUsada, crearCliente, eliminarCliente, obtenerClientePorId]
     );
 
     return (
