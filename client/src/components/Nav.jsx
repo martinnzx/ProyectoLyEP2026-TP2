@@ -14,6 +14,11 @@ const Nav = () => {
                         Clientes
                     </NavLink>
                 </li>
+                <li>
+                    <NavLink to="/ruta">
+                        Hoja de ruta
+                    </NavLink>
+                </li>
             </ul>
         </nav>
     );

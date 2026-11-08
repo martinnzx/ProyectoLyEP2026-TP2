@@ -5,6 +5,7 @@ import Dashboard from '../pages/Dashboard'
 import ListaClientes from '../pages/ListaClientes'
 import DetalleCliente from '../pages/DetalleCliente'
 import ErrorPage from '../pages/ErrorPage'
+import HojaRuta from '../pages/HojaRuta'
 import RutaProtegida from '../components/RutaProtegida'
 const AppRoutes = () => {
   return (
@@ -24,6 +25,14 @@ const AppRoutes = () => {
         element={
           <RutaProtegida>
             <ListaClientes />
+          </RutaProtegida>
+        }
+      />
+      <Route
+        path="/ruta"
+        element={
+          <RutaProtegida>
+            <HojaRuta />
           </RutaProtegida>
         }
       />
